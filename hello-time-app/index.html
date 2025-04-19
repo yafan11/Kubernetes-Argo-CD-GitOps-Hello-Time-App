@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hello Time App</title>
+	<style>
+	    html, body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+	  </style>
+</head>
+<body>
+	<h1>Hello, the time is <span id="clock"></span></h1>
+
+	<script>
+		function showTime() {
+		    const timeNow = new Date().toLocaleTimeString();
+		    document.getElementById('clock').textContent = timeNow;
+		}
+
+		setInterval(showTime, 1000);
+	</script>
+</body>
+</html>
