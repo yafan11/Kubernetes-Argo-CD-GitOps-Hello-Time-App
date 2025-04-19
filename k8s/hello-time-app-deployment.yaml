@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hello-time-app
+  name: hello-time-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-time-app
+  template:
+    metadata:
+      labels:
+        app: hello-time-app
+    spec:
+      containers:
+      - image: koasiamah/hello-time-app:1.0.0
+        name: hello-time-app
+        ports:
+        - containerPort: 80
