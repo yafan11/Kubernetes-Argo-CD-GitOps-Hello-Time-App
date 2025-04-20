@@ -1,4 +1,4 @@
-# Kubernetes-Argo-CD-GitOps-Hello-Time-App
+# Kubernetes Argo CD GitOps Hello Time App
 A simple, containerized web application that displays the current time, deployed to a Kubernetes cluster using **Argo CD** and **GitOps** best practices.
 
 ## Project Architecture
