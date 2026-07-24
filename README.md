@@ -1,139 +1,114 @@
-# Kubernetes Argo CD GitOps Hello Time App
-A simple, containerized web application that displays the current time, deployed to a Kubernetes cluster using **Argo CD** and **GitOps** best practices.
+# 🚀 Kubernetes Argo CD GitOps Hello Time App
 
-## Project Architecture
-```
-Kubernetes-Argo-CD-GitOps-Hello-Time-App/
-├── hello-time-app/
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   ├── hello-time-app.conf
-│   └── index.html
-├── k8s/
-│   ├── argocd-namespace.yaml
-│   ├── hello-time-app-deployment.yaml
-│   └── hello-time-app-service.yaml
-├── LICENSE
-└── README.md
-```
+![GitHub release](https://img.shields.io/github/release/yafan11/Kubernetes-Argo-CD-GitOps-Hello-Time-App.svg) ![Docker](https://img.shields.io/badge/docker-%20%F0%9F%8C%8D%20%F0%9F%8C%8D%20%F0%9F%8C%8D-blue) ![Kubernetes](https://img.shields.io/badge/kubernetes-%20%F0%9F%9A%80%20%F0%9F%9A%80%20%F0%9F%9A%80-lightblue)
 
-## Overview
-This project demonstrates a DevOps workflow:
-* **Containerizing** a static web app with NGINX and Docker.
-* **Pushing** the image to Docker Hub.
-* **Defining** Kubernetes manifest files.
-* **Automating deployment** using Argo CD and GitOps principles.
+Welcome to the **Kubernetes Argo CD GitOps Hello Time App**! This project showcases a simple, containerized web application that displays the current time. It is deployed to a Kubernetes cluster using Argo CD and follows GitOps best practices.
 
-You can build the Docker image yourself using the files in the `hello-time-app` directory, or use the prebuilt image from Docker Hub: `koasiamah/hello-time-app:1.0.0`
+## Table of Contents
 
-## Prerequisites
-* [Docker](https://docs.docker.com/get-started/get-docker/)
-* [Git](https://git-scm.com/)
-* [Minikube](https://minikube.sigs.k8s.io/docs/start/). You can also use Kind or any tool that allows you to create a Kubernetes cluster. Note that the command to create the cluster may vary depending on the tool.
-* [kubectl](https://kubernetes.io/docs/tasks/tools/)
-* [Argo CD CLI](https://argoproj.github.io/argo-cd/cli_installation/)
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Releases](#releases)
 
-## Steps to Deploy
-### 1. Start Minikube Cluster
-```
-minikube start --nodes 3 -p hello-time-app
-```
+## Project Overview
 
-### 2. Set Up Argo CD
-* Apply the Argo CD namespace:
-```
-kubectl apply -f k8s/argocd-namespace.yaml
-```
+The **Hello Time App** is designed to be simple yet effective. It allows users to view the current time in a web interface. This project emphasizes the use of modern deployment techniques, particularly focusing on Kubernetes and Argo CD for continuous delivery.
 
-* Install Argo CD:
-```
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-```
+## Features
 
-* Wait for all Argo CD resource types to be `Ready` and `Running`:
-```
-kubectl -n argocd get all
-```
+- Displays the current time.
+- Containerized using Docker.
+- Deployed on Kubernetes.
+- Managed using Argo CD.
+- Follows GitOps best practices for version control and deployment.
 
-### 3. Expose Argo CD API
-* Patch the Argo CD server service to NodePort:
-```
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
-```
+## Technologies Used
 
-* Port-forward the Argo CD server service to access the Argo CD UI:
-```
-kubectl port-forward svc/argocd-server -n argocd 8080:443
-```
+This project utilizes the following technologies:
 
-* Open http://localhost:8080 in your browser (proceed past the security warning).
+- **Kubernetes**: For orchestrating containerized applications.
+- **Argo CD**: For continuous delivery and GitOps.
+- **Docker**: For containerization.
+- **Nginx**: As a web server to serve the static site.
+- **Git**: For version control.
 
-![Argo CD Screenshot 1](img/Argo-CD-1.png)
+## Installation
 
-### 4. Log In to Argo CD
-* Get the initial admin password:
-```
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
-```
+To set up the Hello Time App on your local machine, follow these steps:
 
-* Username: `admin`
-* Password: (output from above command)
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yafan11/Kubernetes-Argo-CD-GitOps-Hello-Time-App.git
+   cd Kubernetes-Argo-CD-GitOps-Hello-Time-App
+   ```
 
-### 5. Connect Your GitHub Repository
-* In Argo CD UI, go to **Settings > Repositories > Connect Repo**. Connect via HTTPS and enter your Repository URL: https://github.com/KwadwoAsiamah/Kubernetes-Argo-CD-GitOps-Hello-Time-App.git
+2. **Build the Docker image**:
+   ```bash
+   docker build -t hello-time-app .
+   ```
 
-![Argo CD Screenshot 2](img/Argo-CD-2.png)
+3. **Run the Docker container**:
+   ```bash
+   docker run -d -p 8080:80 hello-time-app
+   ```
 
-![Argo CD Screenshot 3](img/Argo-CD-3.png)
+4. **Access the application**:
+   Open your web browser and go to `http://localhost:8080` to see the current time displayed.
 
-![Argo CD Screenshot 4](img/Argo-CD-4.png)
+## Usage
 
-![Argo CD Screenshot 5](img/Argo-CD-5.png)
+Once the application is running, you can view the current time in your web browser. The application refreshes automatically to show the updated time. This simple functionality demonstrates how easy it is to deploy a web application using modern tools.
 
-### 6. Create and Sync the Application
-* In Argo CD UI, go to **Applications > New App** and fill the form:
-    * **Application Name**: `hello-time-app`
-    * **Project Name**: `default`
-    * **Sync Policy**: `Automatic` (check `Prune Resources` and `Self Heal`). With `Prune Resources`, Argo will delete resources if they are no longer defined in Git. With `Self Heal`, Argo will force the state defined in Git into the cluster when a deviation in the cluster is detected.
-    * **Repository URL**: (select your connected repo)
-    * **Revision**: `HEAD`
-    * **Path**: `k8s`
-    * **Cluster URL**: `https://kubernetes.default.svc`
-    * **Namespace**: `default`. The app will be deployed in the default namespace in your cluster.
-* Click Create and wait for the app to sync and deploy.
+## Deployment
 
-![Argo CD Screenshot 6](img/Argo-CD-6.png)
+To deploy the Hello Time App to a Kubernetes cluster using Argo CD, follow these steps:
 
-![Argo CD Screenshot 7](img/Argo-CD-7.png)
+1. **Install Argo CD**:
+   You can install Argo CD in your Kubernetes cluster by following the [official installation guide](https://argo-cd.readthedocs.io/en/stable/getting_started/).
 
-![Argo CD Screenshot 8](img/Argo-CD-8.png)
+2. **Create a new application in Argo CD**:
+   Use the following command to create a new application:
+   ```bash
+   argocd app create hello-time-app --repo https://github.com/yafan11/Kubernetes-Argo-CD-GitOps-Hello-Time-App --path . --dest-server https://kubernetes.default.svc --dest-namespace default
+   ```
 
-![Argo CD Screenshot 9](img/Argo-CD-9.png)
+3. **Sync the application**:
+   Sync the application to deploy it:
+   ```bash
+   argocd app sync hello-time-app
+   ```
 
-![Argo CD Screenshot 10](img/Argo-CD-10.png)
+4. **Access the application**:
+   Once deployed, you can access the application through the external IP of your Kubernetes service.
 
-![Argo CD Screenshot 11](img/Argo-CD-11.png)
+## Contributing
 
-### 7. Access the Hello Time App
-* In a new Terminal, port-forward the Hello Time App Service:
-```
-kubectl port-forward svc/hello-time-app-service -n default 8081:80
-```
+We welcome contributions to improve the Hello Time App. To contribute:
 
-* Visit http://localhost:8081 to see the Hello Time App.
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes.
+4. Submit a pull request.
 
-![Hello Time App Screenshot](img/Hello-Time-App.png)
+## License
 
-## Building the Docker Image (Optional)
-If you want to build the image yourself:
-```
-cd hello-time-app
-```
-```
-docker build -t your-docker-hub/hello-time-app:1.0.0 .
-```
-```
-docker push your-docker-hub/hello-time-app:1.0.0
-```
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-Update the image reference in `k8s/hello-time-app-deployment.yaml` if you use a different Docker image.
+## Contact
+
+For questions or feedback, please reach out to [yafan11](https://github.com/yafan11).
+
+## Releases
+
+You can find the latest releases of the Hello Time App [here](https://github.com/yafan11/Kubernetes-Argo-CD-GitOps-Hello-Time-App/releases). Download the latest version and follow the installation instructions to get started.
+
+---
+
+Thank you for checking out the **Kubernetes Argo CD GitOps Hello Time App**! We hope you find it useful. For any issues or suggestions, please check the "Releases" section or reach out to us directly. Happy coding!
